@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon server.js"
+    "start:dev": "nodemon server.js",
+    "start:prod": "NODE_ENV=production node server"
   },
   "author": "",
   "license": "ISC",
@@ -12,6 +13,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "express-async-handler": "^1.2.0",
+    "express-validator": "^7.2.0",
     "mongoose": "^8.8.1",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.7",
