@@ -5,7 +5,7 @@ const {
   createCategoryValidator,
   updateCategoryValidator,
   deleteCategoryValidator,
-} = require("../utils/validators/categoryValidator");
+} = require("../utils/validators/categoryValidation");
 const {
   getCategories,
   getCategory,
