@@ -1,4 +1,5 @@
-const { check } = require("express-validator");
+const { body, check } = require("express-validator");
+const slugify = require("slugify");
 const validatorMiddleware = require("../../middlewares/validatorMiddleware");
 const CategoryModel = require("../../models/categoryModel");
 const SubCategoryModel = require("../../models/subCategoryModel");
@@ -7,7 +8,11 @@ exports.createProductValidator = [
     .isLength({ min: 3 })
     .withMessage("must be at least 3 chars")
     .notEmpty()
-    .withMessage("Product required"),
+    .withMessage("Product required")
+    .custom((val, { req }) => {
+      req.body.slug = slugify(val);
+      return true;
+    }),
   check("description")
     .notEmpty()
     .withMessage("Product must have description")
@@ -65,11 +70,13 @@ exports.createProductValidator = [
     .optional()
     .isMongoId()
     .withMessage("Invalid ID formate")
-    // Validate subcategory IDs: Fetch matching subcategories from DB and ensure all provided IDs exist
+    // Fetch matching subcategories from DB and ensure all provided IDs exist
     .custom(async (subcategoriesIds) => {
       const subcategories = await SubCategoryModel.find({
         _id: { $exists: true, $in: subcategoriesIds },
       });
+      console.log(subcategoriesIds);
+      // checks if the subcategories have subcategories IDs length is equal to the subcategories in request
       if (
         subcategories.length === 0 ||
         subcategories.length !== subcategoriesIds.length
@@ -118,6 +125,12 @@ exports.getProductValidator = [
 ];
 exports.updateProductValidator = [
   check("id").isMongoId().withMessage("Invalid ID formate"),
+  body("title")
+    .optional()
+    .custom((val, { req }) => {
+      req.body.slug = slugify(val);
+      return true;
+    }),
   validatorMiddleware,
 ];
 exports.deleteProductValidator = [

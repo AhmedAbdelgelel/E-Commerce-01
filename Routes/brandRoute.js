@@ -13,7 +13,6 @@ const {
   updateBrand,
   deleteBrand,
 } = require("../controllers/brandController");
-
 const router = express.Router();
 
 router.route("/").get(getBrands).post(createBrandValidator, createBrand);
