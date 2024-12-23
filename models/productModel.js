@@ -103,4 +103,5 @@ productSchema.post("save", (doc) => {
   setImageURL(doc);
 });
 
-module.exports = mongoose.model("Product", productSchema);
+const Product = mongoose.model("Product", productSchema);
+module.exports = Product;
