@@ -1,8 +1,6 @@
 const asyncHandler = require("express-async-handler");
-// eslint-disable-next-line import/no-extraneous-dependencies
 const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
-// eslint-disable-next-line import/no-extraneous-dependencies
 const sharp = require("sharp");
 const { uploadSingleImage } = require("../middlewares/uploadImageMiddleware");
 const User = require("../models/userModel");

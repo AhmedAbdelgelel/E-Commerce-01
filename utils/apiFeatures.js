@@ -1,4 +1,3 @@
-/* eslint-disable node/no-unsupported-features/es-syntax */
 class ApiFeatures {
   constructor(mongooseQuery, queryString) {
     this.mongooseQuery = mongooseQuery;
