@@ -1,10 +1,13 @@
 const asyncHandler = require("express-async-handler");
+// eslint-disable-next-line import/no-extraneous-dependencies
+const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
 // eslint-disable-next-line import/no-extraneous-dependencies
 const sharp = require("sharp");
 const { uploadSingleImage } = require("../middlewares/uploadImageMiddleware");
 const User = require("../models/userModel");
 const factory = require("./handlersFactory");
+const ApiError = require("../utils/apiError");
 
 exports.uploadUserImage = uploadSingleImage("profileImg");
 
@@ -41,7 +44,43 @@ exports.createUser = factory.createOne(User);
 // @desc   Update specific user
 // @route  PUT /api/v1/users/:id
 // @access Private
-exports.updateUser = factory.updateOne(User);
+exports.updateUser = asyncHandler(async (req, res, next) => {
+  const document = await User.findByIdAndUpdate(
+    req.params.id,
+
+    {
+      name: req.body.name,
+      slug: req.body.slug,
+      phone: req.body.phone,
+      email: req.body.email,
+      role: req.body.role,
+      profileImg: req.body.profileImg,
+    },
+    {
+      new: true,
+    }
+  );
+  if (!document) {
+    return next(new ApiError(`No document found for this id: ${id}`, 404));
+  }
+  res.status(200).json({ data: document });
+});
+
+exports.changeUserPassword = asyncHandler(async (req, res, next) => {
+  const document = await User.findByIdAndUpdate(
+    req.params.id,
+    {
+      password: await bcrypt.hash(req.body.password, 12),
+    },
+    {
+      new: true,
+    }
+  );
+  if (!document) {
+    return next(new ApiError(`No document found for this id: ${id}`, 404));
+  }
+  res.status(200).json({ data: document });
+});
 
 // @desc   Delete specific user
 // @route  DELETE /api/v1/users/:id

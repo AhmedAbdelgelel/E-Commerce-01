@@ -15,8 +15,11 @@ const {
   deleteUser,
   resizeImage,
   uploadUserImage,
+  changeUserPassword,
 } = require("../controllers/userController");
 const router = express.Router();
+
+router.put("/changePassword/:id", changeUserPassword);
 
 router
   .route("/")
