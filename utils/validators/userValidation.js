@@ -60,6 +60,23 @@ exports.updateUserValidator = [
       req.body.slug = slugify(val);
       return true;
     }),
+  check("email")
+    .notEmpty()
+    .withMessage("Email required")
+    .isEmail()
+    .withMessage("Invalid email address")
+    .custom(async (email) => {
+      const user = await User.findOne({ email });
+      if (user) {
+        return Promise.reject(new Error("E-mail is already in use"));
+      }
+    }),
+  check("profileImg").optional(),
+  check("role").optional(),
+  check("phone")
+    .optional()
+    .isMobilePhone(["ar-EG", "ar-SA"])
+    .withMessage("Invalid phone number only accept EG and SA phone numbers"),
   validatorMiddleware,
 ];
 exports.changeUserPasswordValidator = [
