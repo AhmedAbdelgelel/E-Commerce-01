@@ -20,6 +20,7 @@ exports.signUp = asyncHandler(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
   });
+
   // 2- Generate JWT
   const token = generateToken(user._id);
 
