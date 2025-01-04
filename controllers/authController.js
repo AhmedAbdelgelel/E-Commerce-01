@@ -24,8 +24,8 @@ exports.signUp = asyncHandler(async (req, res, next) => {
   const token = generateToken(user._id);
 
   res.status(201).json({
-    data: token,
     user,
+    token,
   });
 });
 exports.login = asyncHandler(async (req, res, next) => {
@@ -43,7 +43,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   const token = generateToken(user._id);
   // 4- send response to clint side
   res.status(200).json({
-    data: user,
+    user,
     token,
   });
 });
