@@ -9,10 +9,7 @@ exports.setCategoryIdToBody = (req, res, next) => {
   }
   next();
 };
-// @desc  Create subCategory
-// @route POST /api/v1/subCategories
-// @access Private
-exports.createSubCategory = factory.createOne(subCategoryModel);
+
 // Nested Route: Filter subcategories by category ID
 exports.createFilterObj = (req, res, next) => {
   let filterObject = {};
@@ -23,21 +20,27 @@ exports.createFilterObj = (req, res, next) => {
   next();
 };
 
+// @desc  Create subCategory
+// @route POST /api/v1/subCategories
+// @access Private/Admin-Manager
+exports.createSubCategory = factory.createOne(subCategoryModel);
+
 // @desc  Get list of subCategories
 // @route GET /api/v1/subCategories
 // @access Public
-exports.getSubCategories = factory.getAll(subCategoryModel, "SubCategory");
+exports.getSubCategories = factory.getAll(subCategoryModel);
 
 // @desc  Get specific subCategory by id
 // @route GET /api/v1/subcategories/:id
 // @access Public
 exports.getSubCategory = factory.getOne(subCategoryModel);
+
 // @desc   Update specific subCategory
 // @route  PUT /api/v1/subCategories
-// @access Private
+// @access Private/Admin-Manager
 exports.updateSubCategory = factory.updateOne(subCategoryModel);
 
 // @desc   Delete specific subCategory
 // @route  DELETE /api/v1/subCategories
-// @access Private
+// @access Private/Admin
 exports.deleteSubCategory = factory.deleteOne(SubCategory);

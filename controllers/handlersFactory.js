@@ -46,18 +46,16 @@ exports.getAll = (Model, modelName = "") =>
     if (req.filterObj) {
       filter = req.filterObj;
     }
-
+    // Build query
     const documentCounts = await Model.countDocuments();
-    const apiFeatures = new ApiFeatures(
-      Model.find({ active: true }, filter),
-      req.query
-    )
+    const apiFeatures = new ApiFeatures(Model.find(filter), req.query)
       .filter()
       .search(modelName)
       .sort()
       .limitFields()
       .paginate(documentCounts);
 
+    // Execute query
     const { mongooseQuery, paginationResult } = apiFeatures;
     const document = await mongooseQuery;
 
