@@ -100,7 +100,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
-
+// @desc Authorization (User Permissions)
 // ["admin","manager"]
 exports.allowedTo = (...roles) =>
   // 1) access roles
@@ -111,3 +111,9 @@ exports.allowedTo = (...roles) =>
     }
     next();
   });
+
+exports.forgotPassword = asyncHandler(async () => {
+  // 1) Get user by email
+  // 2) If user exists, Generate reset random 6 digits and save it in db
+  // 3) Send the reset code via email
+});
