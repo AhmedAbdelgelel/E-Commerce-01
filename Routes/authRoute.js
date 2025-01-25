@@ -6,10 +6,15 @@ const {
   // changeUserPasswordValidator,
 } = require("../utils/validators/authValidator");
 
-const { signUp, login } = require("../controllers/authController");
+const {
+  signUp,
+  login,
+  forgotPassword,
+} = require("../controllers/authController");
 const router = express.Router();
 
-router.route("/signup").post(signUpValidator, signUp);
-router.route("/login").post(loginValidator, login);
+router.post("/signup", signUpValidator, signUp);
+router.post("/login", loginValidator, login);
+router.post("/forgotPassword", forgotPassword);
 
 module.exports = router;

@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
 const ApiError = require("../utils/apiError");
@@ -112,8 +113,29 @@ exports.allowedTo = (...roles) =>
     next();
   });
 
-exports.forgotPassword = asyncHandler(async () => {
+// @desc   Forgot password
+// @route  Post /api/v1/auth/forgotPassword
+// @access Public
+exports.forgotPassword = asyncHandler(async (req, res, next) => {
   // 1) Get user by email
-  // 2) If user exists, Generate reset random 6 digits and save it in db
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(
+      new ApiError(`There is no user with this email ${req.body.email}`)
+    );
+  }
+  // 2) If user exists, Generate hashed reset random 6 digits and save it in db
+  const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+  const hashedResetCode = crypto
+    .createHash("sha256")
+    .update(resetCode)
+    .digest("hex");
+  // Save hashed password reset code into db
+  user.passwordResetCode = hashedResetCode;
+  // Add expiration time for password reset code (10 min)
+  user.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  user.passwordResetVerified = false;
+  await user.save();
+
   // 3) Send the reset code via email
 });
