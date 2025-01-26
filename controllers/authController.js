@@ -5,11 +5,7 @@ const ApiError = require("../utils/apiError");
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../utils/sendEmail");
-const generateToken = (payload) => {
-  return jwt.sign({ userId: payload }, process.env.JWT_SECRET_KEY, {
-    expiresIn: process.env.JWT_EXPIRE_IN,
-  });
-};
+const generateToken = require("../utils/createToken");
 
 // @desc   Signup
 // @route  GET /api/v1/auth/signup
@@ -50,7 +46,6 @@ exports.login = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc make sure the user is logged in
 exports.protect = asyncHandler(async (req, res, next) => {
   // 1- check if token exists, if exists get it
   let token;
@@ -61,7 +56,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
     token = req.headers.authorization.split(" ")[1];
   }
   if (!token) {
-    next(
+    return next(
       new ApiError(
         "You are not login, please login to get access this route",
         401
@@ -69,9 +64,21 @@ exports.protect = asyncHandler(async (req, res, next) => {
     );
   }
 
-  // 2- verify token (no change happens, expired token)
-  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+  } catch (error) {
+    if (error.name === "JsonWebTokenError") {
+      return next(new ApiError("Please log in again.", 401));
+    }
+    if (error.name === "TokenExpiredError") {
+      return next(
+        new ApiError("Your token has expired. Please log in again.", 401)
+      );
+    }
+    // Generic error for other cases
+    return next(new ApiError("Failed to authenticate token.", 401));
+  }
   // 3- check if user exists
   const currentUser = await User.findById(decoded.userId);
   if (!currentUser) {
@@ -82,7 +89,17 @@ exports.protect = asyncHandler(async (req, res, next) => {
       )
     );
   }
-  // 4- check if user change his password after token created
+  // Skip the active check for the recoverMe route to allow account recovery
+  if (req.path === "/recoverMe" && req.method === "POST") {
+    req.user = currentUser;
+    return next();
+  }
+  // 4- check if user is active
+  if (!currentUser.active) {
+    return next(new ApiError("You must activate your account", 404));
+  }
+
+  // 5- check if user changed their password after token was created
   if (currentUser.passwordChangedAt) {
     const passwordChangedTimeStamp = parseInt(
       currentUser.passwordChangedAt.getTime() / 1000,
@@ -92,12 +109,13 @@ exports.protect = asyncHandler(async (req, res, next) => {
     if (passwordChangedTimeStamp > decoded.iat) {
       return next(
         new ApiError(
-          "User recently changed his password please login again",
+          "User recently changed their password. Please login again.",
           401
         )
       );
     }
   }
+
   req.user = currentUser;
   next();
 });
