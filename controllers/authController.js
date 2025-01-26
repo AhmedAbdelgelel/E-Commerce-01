@@ -89,8 +89,8 @@ exports.protect = asyncHandler(async (req, res, next) => {
       )
     );
   }
-  // Skip the active check for the recoverMe route to allow account recovery
-  if (req.path === "/recoverMe" && req.method === "POST") {
+  // Skip the active check for the recoverMe and changeMyPassword
+  if (req.path === "/changeMyPassword" || req.path === "/recoverMe") {
     req.user = currentUser;
     return next();
   }
