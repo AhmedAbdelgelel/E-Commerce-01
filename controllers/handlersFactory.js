@@ -40,7 +40,7 @@ exports.getOne = (Model) =>
     res.status(200).json({ data: document });
   });
 
-exports.getAll = (Model, modelName = "") =>
+exports.getAll = (Model, modelName) =>
   asyncHandler(async (req, res) => {
     let filter = {};
     if (req.filterObj) {
