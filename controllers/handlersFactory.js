@@ -9,6 +9,8 @@ exports.deleteOne = (Model) =>
     if (!document) {
       return next(new ApiError(`No document found for this id ${id}`, 404));
     }
+    // Trigger "remove" event when update document
+    await document.deleteOne();
     res.status(204).send();
   });
 
@@ -21,6 +23,8 @@ exports.updateOne = (Model) =>
     if (!document) {
       return next(new ApiError(`No document found for this id: ${id}`, 404));
     }
+    // Trigger "save" event when update document
+    await document.save();
     res.status(200).json({ data: document });
   });
 
@@ -30,10 +34,16 @@ exports.createOne = (Model) =>
     res.status(201).json({ data: newDocument });
   });
 
-exports.getOne = (Model) =>
+exports.getOne = (Model, populateOption) =>
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    const document = await Model.findById(id);
+    // Build query
+    let query = Model.findById(id);
+    if (populateOption) {
+      query.populate(populateOption);
+    }
+    // Execute query
+    const document = await query;
     if (!document) {
       return next(new ApiError(`No document found for this id: ${id}`, 404));
     }

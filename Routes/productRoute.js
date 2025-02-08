@@ -1,5 +1,5 @@
 const express = require("express");
-
+const reviewsRoute = require("./reviewRoute");
 const {
   getProductValidator,
   createProductValidator,
@@ -18,6 +18,11 @@ const {
 const { protect, allowedTo } = require("../controllers/authController");
 
 const router = express.Router();
+
+// POST  /products/dskjdksdkjshdksdl/reviews
+// GET  /products/dskjdksdkjshdksdl/reviews
+// GET  /products/dskjdksdkjshdksdl/reviews/dlksjdksjd
+router.use("/:productId/reviews", reviewsRoute);
 
 router
   .route("/")

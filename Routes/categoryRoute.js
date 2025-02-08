@@ -19,7 +19,7 @@ const {
 const { protect, allowedTo } = require("../controllers/authController");
 
 const subCategoryRoute = require("./subCategoryRoute");
-
+// Nested route
 const router = express.Router();
 router.use("/:categoryId/subcategories", subCategoryRoute);
 
