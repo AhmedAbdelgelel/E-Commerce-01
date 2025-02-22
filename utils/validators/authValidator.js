@@ -3,6 +3,7 @@ const slugify = require("slugify");
 
 const validatorMiddleware = require("../../middlewares/validatorMiddleware");
 const User = require("../../models/userModel");
+
 exports.getUserValidator = [
   check("id").isMongoId().withMessage("Invalid user id format"),
   validatorMiddleware,
