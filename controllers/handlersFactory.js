@@ -53,6 +53,7 @@ exports.getOne = (Model, populateOption) =>
 exports.getAll = (Model, modelName = "") =>
   asyncHandler(async (req, res) => {
     let filter = {};
+    // req.filterObj may be set by previous middleware like createFilterObj
     if (req.filterObj) {
       filter = req.filterObj;
     }
