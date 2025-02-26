@@ -162,8 +162,8 @@ exports.applyCoupon = asyncHandler(async (req, res, next) => {
   }
   // 2) Get logged user cart to get total cart price
   const cart = await Cart.findOne({ user: req.user._id });
-
   const totalPrice = cart.totalCartPrice;
+
   // 3) Calculate price after priceAfterDiscount
   const totalPriceAfterDiscount = (
     totalPrice -
